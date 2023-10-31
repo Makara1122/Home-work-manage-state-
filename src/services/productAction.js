@@ -47,3 +47,9 @@ export const uploadImageToServer = async (image) => {
     })
     return response
 }
+// search product by title
+
+export const searchProducts = async (query) => {
+    const response = await fetch(`${API_URL}products?title=${query}`)
+    return response.json()
+}

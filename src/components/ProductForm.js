@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { fetchCategories, insertProduct, uploadImageToServer } from "../services/productAction";
 
-export default function ProductForm() {
+export default function ProductForm({edit}) {
+  // get object from navigation
+  const location = useLocation()
     // URL insert: https://api.escuelajs.co/api/v1/products/
     const [categories, setCategories] = useState([])
     const [source, setSource] = useState("")

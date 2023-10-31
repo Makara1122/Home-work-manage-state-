@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
-import { fetchAllProducts } from '../services/productAction';
+import { fetchAllProducts, searchProducts } from '../services/productAction';
 
 export default function ProductDataTable() {
     const [products, setProducts] = useState([])
@@ -23,14 +23,34 @@ export default function ProductDataTable() {
                 width={100}
                 style={{padding: 10}}
             />
+        },
+        {
+          name: 'Action',
+          selector: row =>
+          <>
+          <button type='button' class="text-blue-700 hover:text-white" />
+          <button 
+          onClick={() => navigate("/edit", {
+            state: row
+          })}
+          type='button'
+          class='text-blue-700 hover:text-white border border-blue-700'
+          />
+          </>
         }
 
     ];
 
     useEffect(() => {
+      
         fetchAllProducts()
         .then(res => setProducts(res))
     }, [])
+    useEffect(() => {
+      
+      searchProducts(query)
+      .then(res => setProducts(res))
+  }, [query])
     
     
   return (
@@ -1367,6 +1387,20 @@ export default function ProductDataTable() {
         columns={columns}
         data={products}
         pagination
+        subHeader
+        subHeaderComponent = {
+          <input
+          type='text'
+          placeholder='Searching....'
+          className='text-gray-900 border border-gray-300 rounded-lg'
+          onChange={
+            (e) => {
+              setQuery(e.target.value)
+              console.log(query)
+             
+            } 
+          } />
+        }
         
       />
       
