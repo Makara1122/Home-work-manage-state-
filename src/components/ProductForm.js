@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { fetchCategories, insertProduct, uploadImageToServer } from "../services/productAction";
-
+import { useLocation } from "react-router-dom";
+import { updateProducts } from "../services/productAction";
 export default function ProductForm({edit}) {
+
   // get object from navigation
   const location = useLocation()
-    // URL insert: https://api.escuelajs.co/api/v1/products/
+
     const [categories, setCategories] = useState([])
     const [source, setSource] = useState("")
     // declare product object
@@ -19,6 +21,27 @@ export default function ProductForm({edit}) {
     // handle onsubmit
     const handleOnSubmit = (e) => {
         e.preventDefault()
+        console.log('is edit? ', edit)
+        if (edit) {
+          // is used pick new images for product update?
+          if (source == ""){
+            // user don't choose any new image
+            console.log('product before update: ',product)
+            updateProducts(product, product.id)
+            .then(res => console.log(res))
+          } else {
+            // will execute when user browse new images for product
+            let image = new FormData()
+            image.append('file', source)
+            uploadImageToServer(image)
+            .then(res => {
+              product.images = [res.data.location]
+              // final insert product with image
+              insertProduct(product)
+              .then(res => console.log(res))
+            })
+          }
+        }
         console.log(product)
         let image = new FormData()
         image.append('file', source)
@@ -52,8 +75,25 @@ export default function ProductForm({edit}) {
         console.log('source: ', source)
     }
     useEffect(() => {
-        fetchCategories()
-        .then(resp => setCategories(resp))
+      console.log('is edit? ', edit)
+      if(edit){
+        console.log("product object", location.state.title)
+        // destruturing object from location.state
+        let {id, title, price, description, category, images} = location.state
+        // reassign value to state
+        product.id = id
+        product.title = title
+        product.price = price
+        product.description = description
+        product.categoryId = category.id
+        product.images = images
+      }
+      if(edit){
+        console.log("product object", location.state)
+      }
+
+      fetchCategories()
+      .then(resp => setCategories(resp))
     }, [])
     
   return (

@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
 import { fetchAllProducts, searchProducts } from '../services/productAction';
+import { useNavigate } from 'react-router-dom';
 
 export default function ProductDataTable() {
     const [products, setProducts] = useState([])
+    const [query, setQuery] = useState("")
+
+    const navigate = useNavigate()
+
+    // modal state
+    const [openModal, setOpenModal] = useState(false)
+
     const columns = [
         {
             name: 'Title',
@@ -25,32 +33,24 @@ export default function ProductDataTable() {
             />
         },
         {
-          name: 'Action',
-          selector: row =>
+          name: "Actions",
+          selector: row => 
           <>
-          <button type='button' class="text-blue-700 hover:text-white" />
-          <button 
-          onClick={() => navigate("/edit", {
-            state: row
-          })}
-          type='button'
-          class='text-blue-700 hover:text-white border border-blue-700'
-          />
+            <button type="button" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">View</button>
+            <button
+              onClick={() => navigate("/edit", {
+                state: row
+              })}
+              type="button" 
+              class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">Edit</button>
+            <button type="button" class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-500 dark:focus:ring-red-800">Delete</button>
           </>
         }
-
     ];
-
     useEffect(() => {
-      
-        fetchAllProducts()
+        searchProducts(query)
         .then(res => setProducts(res))
-    }, [])
-    useEffect(() => {
-      
-      searchProducts(query)
-      .then(res => setProducts(res))
-  }, [query])
+    }, [query])
     
     
   return (
@@ -1368,42 +1368,29 @@ export default function ProductDataTable() {
       </div>
     </aside>
     <main class="p-4 md:ml-64 h-auto pt-20">
-      {/* <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-        <div
-          class="border-2 border-dashed border-gray-300 rounded-lg dark:border-gray-600 h-32 md:h-64"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-32 md:h-64"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-32 md:h-64"
-        ></div>
-        <div
-          class="border-2 border-dashed rounded-lg border-gray-300 dark:border-gray-600 h-32 md:h-64"
-        ></div>
-      </div> */}
+      
+    <button 
+      type="button" 
+      onClick={() => navigate('/create')}
+      className="text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:bg-gradient-to-l focus:ring-4 focus:outline-none focus:ring-purple-200 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Create Product</button>  
       
       <DataTable 
         columns={columns}
         data={products}
         pagination
         subHeader
-        subHeaderComponent = {
-          <input
-          type='text'
-          placeholder='Searching....'
-          className='text-gray-900 border border-gray-300 rounded-lg'
-          onChange={
-            (e) => {
+        subHeaderComponent={
+          <input 
+            type='text'
+            placeholder='Searching....'
+            className='text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400'
+            onChange={(e) => {
               setQuery(e.target.value)
               console.log(query)
-             
-            } 
-          } />
+            }}
+          />
         }
-        
-      />
-      
+      />  
     </main>
   </div>
   )

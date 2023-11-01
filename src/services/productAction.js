@@ -18,6 +18,12 @@ export const fetchAllProducts = async () => {
     return response.json()
 }
 
+// search product by title
+export const searchProducts = async (query) => {
+    const response = await fetch(`${API_URL}products?title=${query}`)
+    return response.json()
+}
+
 // get product categories
 export const fetchCategories = async () => {
     const response = await fetch(`${API_URL}categories`)
@@ -47,9 +53,15 @@ export const uploadImageToServer = async (image) => {
     })
     return response
 }
-// search product by title
 
-export const searchProducts = async (query) => {
-    const response = await fetch(`${API_URL}products?title=${query}`)
+export const updateProducts = async (product, id) => {
+    let response  = await fetch(`${API_URL}products/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type" : "application/json",
+            "Authorization" : "bearer key"
+        },
+        body: JSON.stringify(product)
+    })
     return response.json()
 }
