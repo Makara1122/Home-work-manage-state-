@@ -5,7 +5,7 @@ export default function MyNav() {
   const navigate = useNavigate()
   const handleSwitchTheme = () => {
     console.log("handle switch")
-    console.log(localStorage.getItem('color-theme'))
+    console.log(localStorage.getItem('color-theme') )
     document.documentElement.classList.add("dark")
     localStorage.setItem('color-theme', 'dark')
   }
