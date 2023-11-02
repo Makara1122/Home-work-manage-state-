@@ -54,6 +54,7 @@ export const uploadImageToServer = async (image) => {
     return response
 }
 
+// update product by id 
 export const updateProducts = async (product, id) => {
     let response  = await fetch(`${API_URL}products/${id}`, {
         method: "PUT",

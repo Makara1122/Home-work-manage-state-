@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { fetchCategories, insertProduct, uploadImageToServer } from "../services/productAction";
-import { useLocation } from "react-router-dom";
-import { updateProducts } from "../services/productAction";
+import { fetchCategories, insertProduct, updateProducts, uploadImageToServer } from "../services/productAction";
+import { useLocation, useNavigate } from "react-router-dom";
+
 export default function ProductForm({edit}) {
 
   // get object from navigation
   const location = useLocation()
+  const navigate = useNavigate()
 
     const [categories, setCategories] = useState([])
     const [source, setSource] = useState("")
     // declare product object
     const [product, setProduct] = useState({
+        id: 0,
         title: "",
         price: 0,
         description: "",
@@ -22,38 +24,48 @@ export default function ProductForm({edit}) {
     const handleOnSubmit = (e) => {
         e.preventDefault()
         console.log('is edit? ', edit)
-        if (edit) {
+        if (edit){
           // is used pick new images for product update?
           if (source == ""){
             // user don't choose any new image
-            console.log('product before update: ',product)
+            console.log('product before update: ', product)
             updateProducts(product, product.id)
-            .then(res => console.log(res))
-          } else {
+            .then(res => {
+              navigate('/dashboard')
+            })
+          }else{
             // will execute when user browse new images for product
             let image = new FormData()
             image.append('file', source)
             uploadImageToServer(image)
             .then(res => {
               product.images = [res.data.location]
-              // final insert product with image
-              insertProduct(product)
-              .then(res => console.log(res))
+              console.log('product before update with new image', product)
+              updateProducts(product, product.id)
+              .then(res => {
+                console.log(res)
+                navigate('/dashboard')
+              })
             })
           }
-        }
-        console.log(product)
-        let image = new FormData()
-        image.append('file', source)
-        // perform upload image first
-        uploadImageToServer(image)
-        .then(res => {
-          // assign url image to state
-          product.images = [res.data.location]
-          // final insert product with image
-          insertProduct(product)
-          .then(res => console.log(res))
-        })
+        }else{
+          // block code execute when user insert product
+          // console.log(product)
+          let image = new FormData()
+          image.append('file', source)
+          // perform upload image first
+          uploadImageToServer(image)
+          .then(res => {
+            // assign url image to state
+            product.images = [res.data.location]
+            // final insert product with image
+            insertProduct(product)
+            .then(res => {
+              console.log(res)
+              navigate('/dashboard')
+            })
+          })
+        }  
     }
     // gather user input
     const onChangeHandler = (e) => {
@@ -69,7 +81,6 @@ export default function ProductForm({edit}) {
     // handle user upload image
     const onFileUpload = (e) => {
         console.log(e.target.files)
-        // setSource(e.target.files[0])
         // console.log(source)
         setSource(e.target.files[0])
         console.log('source: ', source)
@@ -87,9 +98,6 @@ export default function ProductForm({edit}) {
         product.description = description
         product.categoryId = category.id
         product.images = images
-      }
-      if(edit){
-        console.log("product object", location.state)
       }
 
       fetchCategories()
@@ -166,7 +174,7 @@ export default function ProductForm({edit}) {
               onChange={onChangeHandler}
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
             >
-              <option selected="">Product Category</option>
+              {/* <option selected>Product Category</option> */}
               {
                 categories.map(category => (
                     <option value={category.id}>{category.name}</option>
