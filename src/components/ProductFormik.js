@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-import React from 'react'
-
-export default function ProductFormik() {
-  return (
-=======
 import { useFormik } from 'formik'
 import React, { useEffect, useState } from 'react'
 import * as Yup from 'yup'
@@ -15,18 +9,12 @@ export default function ProductFormik() {
     const [source, setSource] = useState("")
     const navigate = useNavigate()
 
->>>>>>> 5a9045fae03c835885d02daf682c49132397fcc6
     const formik = useFormik({
         initialValues: {
             title: "",
             price: 0,
             description: "",
             categoryId: 0,
-<<<<<<< HEAD
-            images: [""]
-        }
-    })
-=======
             images: ["https://picsum.photos/640/640?r=801"]
         },
         validationSchema: Yup.object({
@@ -241,6 +229,5 @@ export default function ProductFormik() {
         </div>
       </form>
     </section>
->>>>>>> 5a9045fae03c835885d02daf682c49132397fcc6
   )
 }
